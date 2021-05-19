@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
+from django.utils.translation import gettext_lazy as _
 from .envtools import getenv
 
 # import sentry_sdk
@@ -31,7 +31,9 @@ USE_X_FORWARDED_HOST = False
 SESSION_COOKIE_HTTPONLY = True
 
 SERVER_URL = os.getenv("SERVER_URL", default="*")
-
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = '/menu/'
+LOGOUT_REDIRECT_URL = LOGIN_URL
 
 APPEND_SLASH = False
 
@@ -46,13 +48,18 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_extensions",
+    "django_filters",
     "backend_test.utils",
+    "apps.menu",
+    "apps.employee",
+    "apps.order",
 ]
 
 MIDDLEWARE = [
     "backend_test.middleware.HealthCheckAwareSessionMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'django.middleware.locale.LocaleMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -66,7 +73,9 @@ ROOT_URLCONF = "backend_test.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -132,6 +141,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
+LANGUAGES = [
+    ("en", _("English")),
+    ("es", _("Spanish")),
+]
+
 TIME_ZONE = "UTC"
 
 USE_I18N = True
@@ -145,6 +159,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "../collected_static")
 STATIC_URL = "/static/"
+PUBLIC_ROOT = os.path.join(BASE_DIR, "public")
+STATICFILES_DIRS = [
+    PUBLIC_ROOT,
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],

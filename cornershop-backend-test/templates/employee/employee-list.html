@@ -1,0 +1,51 @@
+{% extends "authenticated.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block sub_title %}{% trans "List of employees" %}{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block content %}
+<h4>{% trans "List of employees" %} | <a href="{% url "employee:employee-create" %}">{% trans "Create a new employee" %}</a></h4>
+<table id="list-table">
+    <thead>
+        <tr>
+            <th>{% trans "ID number" %}</th>
+            <th>{% trans "Details" %}</th>
+            <th>{% trans "First name" %}</th>
+            <th>{% trans "Last name" %}</th></th>
+            <th>{% trans "Country" %}</th>
+            <th>{% trans "Slack" %}</th>
+            <th>{% trans "Edit" %}</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<textarea style="width: 100%; height: 300px"></textarea>
+{% endblock %}
+
+{% block scripts %}
+function getDetails(menu_id) {
+    $.get(String.format('/api/employee/{0}/', menu_id), function(data) {
+        $("textarea").html(JSON.stringify(data, null, "\t"));
+    });
+}
+
+$(function() {
+    $.get("/api/employee/", function(data) {
+        $.each(data, function(i, item) {
+            $("<tr>").append(
+                $("<td>").text("#" + item.id),
+                $("<td>").html($(String.format('<button onclick="getDetails({0})">See details</button>', item.id))),
+                $("<td>").text(item.first_name),
+                $("<td>").text(item.last_name),
+                $("<td>").text(item.country),
+                $("<td>").text(item.slack_id),
+                $("<td>").html($(String.format('<a href="/employee/employee/{0}/edit">Edit employee</button>', item.id))),
+            ).appendTo("#list-table");
+        });
+    });
+});
+{% endblock %}

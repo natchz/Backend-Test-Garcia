@@ -1,0 +1,19 @@
+{% extends 'authenticated.html' %}
+{% load static %}
+{% load i18n %}
+{% load rest_framework %}
+
+{% block sub_title %}{% trans "Edit a menu" %}{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block content %}
+<h4>{% trans "Edit menu" %}</small></h4>
+<form action="{% url 'api:menu-detail' pk=menu.pk %}" method="PATCH" ajax-send>
+    {% csrf_token %}
+    {% render_form serializer %}
+    <button type="submit">{% trans "Edit" %}</button>
+    <a href="{% url 'menu:menu-list' %}">{% trans "Cancel" %}</a>
+</form>
+{% endblock %}

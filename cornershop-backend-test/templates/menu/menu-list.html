@@ -1,0 +1,74 @@
+{% extends "authenticated.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block sub_title %}{% trans "List of menus" %}{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block content %}
+<h4>{% trans "List of menus" %} | <a href="{% url "menu:menu-create" %}">{% trans "Create a new menu" %}</a></h4>
+<table id="list-table">
+    <thead>
+        <tr>
+            <th>{% trans "ID number" %}</th>
+            <th>{% trans "Details" %}</th>
+            <th>{% trans "Orders" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Country" %}</th></th>
+            <th>{% trans "Published" %}</th>
+            <th>{% trans "Edit" %}</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<textarea style="width: 100%; height: 300px"></textarea>
+{% endblock %}
+
+{% block scripts %}
+function getDetails(menu_id) {
+    $.get(String.format('/api/menu/{0}/', menu_id), function(data) {
+        $("textarea").html(JSON.stringify(data, null, "\t"));
+    });
+}
+
+function getOrders(menu_id) {
+    $.get(String.format('/api/order/?menu={0}', menu_id), function(data) {
+        $("textarea").html(JSON.stringify(data, null, "\t"));
+    });
+}
+
+function setPublish(menu_id) {
+    $.post(String.format('/api/menu/{0}/publish/', menu_id), {})
+    .done(function(data) {
+        alert(JSON.stringify(data, null, "\t"));
+    })
+    .fail(function(result) {
+        alert(
+            String.format(
+                'HTTP {0}: {1} {2}',
+                result.status,
+                result.statusText,
+                JSON.stringify(result.responseJSON, null, "\t")
+            )
+        );
+    });
+}
+
+$(function() {
+    $.get("/api/menu/", function(data) {
+        $.each(data, function(i, item) {
+            $("<tr>").append(
+                $("<td>").text("#" + item.id),
+                $("<td>").html($(String.format('<button onclick="getDetails({0})">See details</button>', item.id))),
+                $("<td>").html($(String.format('<button onclick="getOrders({0})">See orders</button>', item.id))),
+                $("<td>").text(item.date),
+                $("<td>").text(item.country),
+                $("<td>").html(item.published ? $(String.format('<span>{0}</span>', item.published)) : $(String.format('<button onclick="setPublish({0})">Send notifications</button>', item.id))),
+                $("<td>").html($(String.format('<a href="/menu/{0}/edit">Edit menu</button>', item.id))),
+            ).appendTo("#list-table");
+        });
+    });
+});
+{% endblock %}

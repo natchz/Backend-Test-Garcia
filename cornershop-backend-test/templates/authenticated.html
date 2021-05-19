@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Cornerlunch | {% block sub_title %}{% endblock %}{% endblock %}
+
+{% block base_style %}
+{% endblock %}
+
+{% block body %}
+<menu>
+    <li><a href="{% url 'menu:menu-list' %}">{% trans "Menus" %}</a></li>
+    <li><a href="{% url 'menu:dish-list' %}">{% trans "Dishes" %}</a></li>
+    <li><a href="{% url 'employee:employee-list' %}">{% trans "Employees" %}</a></li>
+    <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+</menu>
+<main>
+    {% block content %}{% endblock %}
+</main>
+{% endblock %}

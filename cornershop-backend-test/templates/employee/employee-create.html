@@ -1,0 +1,19 @@
+{% extends 'authenticated.html' %}
+{% load static %}
+{% load i18n %}
+{% load rest_framework %}
+
+{% block sub_title %}{% trans "Create a employee" %}{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block content %}
+<h4>{% trans "Create a employee" %}</h4>
+<form action="{% url 'api:employee-list' %}" method="POST" ajax-send>
+    {% csrf_token %}
+    {% render_form serializer %}
+    <button type="submit">{% trans "Create" %}</button>
+    <a href="{% url 'employee:employee-list' %}">{% trans "Cancel" %}</a>
+</form>
+{% endblock %}

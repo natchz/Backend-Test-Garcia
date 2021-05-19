@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load rest_framework %}
+
+{% block title %}{% trans "Customize my lunch" %}{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+<h4>{{ order }}</h4>
+{% if order.dishes.all %}
+{% trans "You have already chosen the following dishes" %}
+<ul>
+    {% for dish in order.dishes.all %}
+    <li>{{ dish }}</li>
+    {% endfor  %}
+</ul>
+
+{% else %}
+<form action="{% url 'api:order-detail' pk=order.pk %}" method="PATCH" ajax-send>
+    {% csrf_token %}
+    <div class="form-group ">
+        <label>{% trans "Select main course" %}</label>
+        <select class="form-control" name="dishes">
+            {% for dish in dishes %}
+            {% if dish.type == 1 %}
+            <option value="{{ dish.id }}">{{ dish.name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group ">
+        <label>{% trans "Select salad" %}</label>
+        <select class="form-control" name="dishes">
+            {% for dish in dishes %}
+            {% if dish.type == 2 %}
+            <option value="{{ dish.id }}">{{ dish.name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group ">
+        <label>{% trans "Select dessert" %}</label>
+        <select class="form-control" name="dishes">
+            {% for dish in dishes %}
+            {% if dish.type == 3 %}
+            <option value="{{ dish.id }}">{{ dish.name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Note</label>
+        <input name="note" class="form-control" type="text" value="">
+        <span class="help-block">Space to write the order customizations.</span>
+    </div>
+    <button type="submit">{% trans "Create" %}</button>
+</form>
+{% endif %}
+<textarea style="width: 100%; height: 300px"></textarea>
+{% endblock %}
+
+{% block scripts %}
+$(function() {
+    $.get("/api/order/{{ order.id }}/", function(data) {
+        $("textarea").html(JSON.stringify(data, null, "\t"));
+    });
+});
+{% endblock %}
