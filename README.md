@@ -51,7 +51,7 @@ For the correct deployment of the project, the following actions are necessary.
 11. The message will reach the user slack and must enter through the following link http://127.0.0.1:8000/menu/{uuid}
 12. Choose your favorite dishes
 
-! [slack message example](cornershop-backend-test/docs/slack-message.png)
+![slack message example](cornershop-backend-test/docs/slack-message.png?raw=true)
 
 ### Tests
 Run '$ python manage.py apps.menu.tests'
